@@ -15,6 +15,7 @@ echo
 
 # if no modeline specified  in format:
 # Modeline "1280x768_60.00" 80.14 1280 1344 1480 1680 768 769 772 795 -HSync +Vsync
+# extra feature: instead of dotclock (80.14) you can specify vertical refresh if it ends in "Hz", eg. "75Hz"
 
 if test -z "$1"
 then
@@ -27,6 +28,7 @@ fi
 shift
 
 DotClock=$1; shift
+
 HDisp=$1; shift
 HSyncStart=$1; shift
 HSyncEnd=$1; shift
@@ -36,6 +38,15 @@ VDisp=$1; shift
 VSyncStart=$1; shift
 VSyncEnd=$1; shift
 VTotal=$1; shift
+
+case "$DotClock" in
+	*Hz)
+		VRefresh=${DotClock%Hz}
+	        DotClock=`echo "scale = 4; $VRefresh * $HTotal * $VTotal / 1000000" | bc -l`
+		echo "Converting Vertical Refresh of $VRefresh Hz to DotClock of $DotClock Mhz"
+		;;
+esac
+
 
 XV_COUNT=`date +%H%M%S`
 while true
