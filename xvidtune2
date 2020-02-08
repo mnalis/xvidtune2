@@ -63,7 +63,7 @@ do
 	VRefresh=`echo "scale = 4; $DotClock * 1000000 / $HTotal / $VTotal" | bc -l`
         echo "H: 0 >> $HDisp >> [$HBl1{$HSync}$HBl2] >> $HTotal\t V: 0 >> $VDisp >> [$VBl1{$VSync}$VBl2] >> $VTotal\tV.Refresh: $VRefresh Hz"
 
-        printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower, hse/HSE, hss/HSS, \t(u)p, (d)own, (t)aller, (s)shorter, vse/VSE, vss/VSS: "
+        printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower, hse/HSE, hss/HSS, dc/DC, \t(u)p, (d)own, (t)aller, (s)shorter, vse/VSE, vss/VSS: "
         read cmds
 
 	for cmd in `echo $cmds`
@@ -152,6 +152,15 @@ do
 		VSS)
 			echo "increment VSyncStart"
                         VSyncStart=$((VSyncStart+8))
+			;;
+
+		dc)
+			echo "decrement DotClock"
+                        DotClock=$(echo $DotClock-1 | bc)
+			;;
+		DC)
+			echo "increment DotClock"
+                        DotClock=$(echo $DotClock+1 | bc)
 			;;
 
             esac
