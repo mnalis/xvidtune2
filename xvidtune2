@@ -7,7 +7,20 @@
 
 DEVICE="VGA1"
 
-test -z "$1" && set -- `xvidtune -show`
+echo "Please read https://arachnoid.com/modelines/ for details on Modeline tuning"
+echo "And make sure no values printed go negative (or too small) !!"
+echo
+
+
+# if no modeline specified  in format:
+# Modeline "1280x768_60.00" 80.14 1280 1344 1480 1680 768 769 772 795 -HSync +Vsync
+
+if test -z "$1"
+then
+	echo No modeline specified, trying to get current one from "xvidtune -show"
+	echo
+	set -- `xvidtune -show`
+fi
 
 # remove the original modeline name
 shift
