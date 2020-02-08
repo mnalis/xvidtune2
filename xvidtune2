@@ -49,7 +49,7 @@ do
 	VRefresh=`echo "scale = 4; $DotClock * 1000000 / $HTotal / $VTotal" | bc -l`
         echo "H: 0 >> $HDisp >> [$HBl1{$HSync}$HBl2] >> $HTotal\t V: 0 >> $VDisp >> [$VBl1{$VSync}$VBl2] >> $VTotal\tV.Refresh: $VRefresh Hz"
 
-        printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower: "
+        printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower, \t(u)p, (d)own, (t)aller, (s)shorter: "
         read cmd
 
         case "$cmd" in
@@ -72,6 +72,28 @@ do
                 n)
                         #echo "make narrower"
                         HTotal=$((HTotal+8))
+                        ;;
+
+                u)
+                        #echo "move up"
+                        VSyncEnd=$((VSyncEnd+8))
+                        VSyncStart=$((VSyncStart+8))
+                        ;;
+
+                d)
+                        #echo "move down"
+                        VSyncEnd=$((VSyncEnd-8))
+                        VSyncStart=$((VSyncStart-8))
+                        ;;
+
+                t)
+                        #echo "make taller"
+                        VTotal=$((VTotal-8))
+                        ;;
+
+                s)
+                        #echo "make shorter"
+                        VTotal=$((VTotal+8))
                         ;;
         esac
         
