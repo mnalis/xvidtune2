@@ -2,8 +2,9 @@
 # Matija Nalis <mnalis-git@voyager.hr> started 2020/02, GPLv3+
 
 # FIXME - opcija da drzimo Vert.refresh konstantnim?
-# FIXME - github
+# FIXME - github README.md s uputama i license
 # FIXME - POSIX sh compatible
+# FIXME - limiti low/high za hrefresh, vrefresh, dotclock
 
 DEVICE="VGA1"
 
@@ -78,15 +79,15 @@ do
         printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower, hse/HSE, hss/HSS, dc/DC, \t(u)p, (d)own, (t)aller, (s)shorter, vse/VSE, vss/VSS, (R)estore: "
         read cmds
 
-	$old_DotClock=$DotClock
-	$old_HDisp=$HDisp
-	$old_HSyncStart=$HSyncStart
-	$old_HSyncEnd=$HSyncEnd
-	$old_HTotal=$HTotal
-	$old_VDisp=$VDisp
-	$old_VSyncStart=$VSyncStart
-	$old_VSyncEnd=$VSyncEnd
-	$old_VTotal=$VTotal
+	old_DotClock=$DotClock
+	old_HDisp=$HDisp
+	old_HSyncStart=$HSyncStart
+	old_HSyncEnd=$HSyncEnd
+	old_HTotal=$HTotal
+	old_VDisp=$VDisp
+	old_VSyncStart=$VSyncStart
+	old_VSyncEnd=$VSyncEnd
+	old_VTotal=$VTotal
 
 	for cmd in `echo $cmds`
 	do 
@@ -186,15 +187,15 @@ do
 			;;
 		R)
 			echo "Restoring previous values"
-			$DotClock=$old_DotClock
-			$HDisp=$old_HDisp
-			$HSyncStart=$old_HSyncStart
-			$HSyncEnd=$old_HSyncEnd
-			$HTotal=$old_HTotal
-			$VDisp=$old_VDisp
-			$VSyncStart=$old_VSyncStart
-			$VSyncEnd=$old_VSyncEnd
-			$VTotal=$old_VTotal
+			DotClock=$old_DotClock
+			HDisp=$old_HDisp
+			HSyncStart=$old_HSyncStart
+			HSyncEnd=$old_HSyncEnd
+			HTotal=$old_HTotal
+			VDisp=$old_VDisp
+			VSyncStart=$old_VSyncStart
+			VSyncEnd=$old_VSyncEnd
+			VTotal=$old_VTotal
 			;;
 
 
