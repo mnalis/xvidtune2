@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 # Matija Nalis <mnalis-git@voyager.hr> started 2020/02, GPLv3+
 
 # FIXME - opcija da drzimo Vert.refresh konstantnim?
@@ -64,52 +64,60 @@ do
         echo "H: 0 >> $HDisp >> [$HBl1{$HSync}$HBl2] >> $HTotal\t V: 0 >> $VDisp >> [$VBl1{$VSync}$VBl2] >> $VTotal\tV.Refresh: $VRefresh Hz"
 
         printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower, \t(u)p, (d)own, (t)aller, (s)shorter: "
-        read cmd
+        read cmds
 
-        case "$cmd" in
+	for cmd in `echo $cmds`
+	do 
+	    #echo "processing: $cmd (from $cmds)"
+            case "$cmd" in
                 l)
-                        #echo "move left"
+                        echo "move left"
                         HSyncEnd=$((HSyncEnd+8))
                         HSyncStart=$((HSyncStart+8))
                         ;;
                 r)
-                        #echo "move right"
+                        echo "move right"
                         HSyncEnd=$((HSyncEnd-8))
                         HSyncStart=$((HSyncStart-8))
                         ;;
 
                 w)
-                        #echo "make wider"
+                        echo "make wider"
                         HTotal=$((HTotal-8))
                         ;;
 
                 n)
-                        #echo "make narrower"
+                        echo "make narrower"
                         HTotal=$((HTotal+8))
                         ;;
 
                 u)
-                        #echo "move up"
+                        echo "move up"
                         VSyncEnd=$((VSyncEnd+8))
                         VSyncStart=$((VSyncStart+8))
                         ;;
 
                 d)
-                        #echo "move down"
+                        echo "move down"
                         VSyncEnd=$((VSyncEnd-8))
                         VSyncStart=$((VSyncStart-8))
                         ;;
 
                 t)
-                        #echo "make taller"
+                        echo "make taller"
                         VTotal=$((VTotal-8))
                         ;;
 
                 s)
-                        #echo "make shorter"
+                        echo "make shorter"
                         VTotal=$((VTotal+8))
                         ;;
-        esac
+
+		q)	echo "Quitting..."
+			exit 0
+			;;
+            esac
+	done
         
         echo
 
