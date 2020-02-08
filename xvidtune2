@@ -1,9 +1,11 @@
-#!/bin/sh
+#!/bin/zsh
 # Matija Nalis <mnalis-git@voyager.hr> started 2020/02, GPLv3+
 
 # FIXME - opcija da drzimo Vert.refresh konstantnim?
 # FIXME - github
 # FIXME - POSIX sh compatible
+
+DEVICE="VGA1"
 
 test -z "$1" && set -- `xvidtune -show`
 
@@ -22,25 +24,29 @@ VSyncEnd=$1; shift
 VTotal=$1; shift
 
 XV_COUNT=0
-export XV_COUNT
 while true
 do
-        XV_COUNT=$[XV_COUNT+1]; name=mode_t$XV_COUNT
+        XV_COUNT=$((XV_COUNT+1)); name=mode_t$XV_COUNT
         echo   "Modeline $name $DotClock $HDisp $HSyncStart $HSyncEnd $HTotal  $VDisp $VSyncStart $VSyncEnd $VTotal $*"
-        xrandr --newmode $name $DotClock $HDisp $HSyncStart $HSyncEnd $HTotal  $VDisp $VSyncStart $VSyncEnd $VTotal $@
-        xrandr --addmode VGA1 $name; xrandr --output VGA1 --mode $name
 
-        HBlanking=$[HTotal-HDisp]
-        HSync=$[HSyncEnd-HSyncStart]
-        HBl1=$[HSyncStart-HDisp]
-        HBl2=$[HTotal-HSyncEnd]
+        xrandr --delmode $DEVICE $name > /dev/null 2>&1
+        xrandr --rmmode  $name > /dev/null 2>&1
+        
+        xrandr --newmode $name $DotClock $HDisp $HSyncStart $HSyncEnd $HTotal  $VDisp $VSyncStart $VSyncEnd $VTotal "$@"
+        xrandr --addmode $DEVICE $name
+        xrandr --output  $DEVICE --mode $name
 
-        VBlanking=$[VTotal-VDisp]
-        VSync=$[VSyncEnd-VSyncStart]
-        VBl1=$[VSyncStart-VDisp]
-        VBl2=$[VTotal-VSyncEnd]
+        HBlanking=$((HTotal-HDisp))
+        HSync=$((HSyncEnd-HSyncStart))
+        HBl1=$((HSyncStart-HDisp))
+        HBl2=$((HTotal-HSyncEnd))
 
-        VRefresh=$[DotClock*1000000/HTotal/VTotal]
+        VBlanking=$((VTotal-VDisp))
+        VSync=$((VSyncEnd-VSyncStart))
+        VBl1=$((VSyncStart-VDisp))
+        VBl2=$((VTotal-VSyncEnd))
+
+	VRefresh=`echo "scale = 4; $DotClock * 1000000 / $HTotal / $VTotal" | bc -l`
         echo "H: 0 >> $HDisp >> [$HBl1{$HSync}$HBl2] >> $HTotal\t V: 0 >> $VDisp >> [$VBl1{$VSync}$VBl2] >> $VTotal\tV.Refresh: $VRefresh Hz"
 
         printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower: "
@@ -48,15 +54,27 @@ do
 
         case "$cmd" in
                 l)
-                        echo "move left"
-                        HSyncEnd=$[HSyncEnd+8]
-                        HSyncStart=$[HSyncStart+8]
+                        #echo "move left"
+                        HSyncEnd=$((HSyncEnd+8))
+                        HSyncStart=$((HSyncStart+8))
                         ;;
                 r)
-                        echo "move right"
-                        HSyncEnd=$[HSyncEnd-8]
-                        HSyncStart=$[HSyncStart-8]
+                        #echo "move right"
+                        HSyncEnd=$((HSyncEnd-8))
+                        HSyncStart=$((HSyncStart-8))
+                        ;;
+
+                w)
+                        #echo "make wider"
+                        HTotal=$((HTotal-8))
+                        ;;
+
+                n)
+                        #echo "make narrower"
+                        HTotal=$((HTotal+8))
                         ;;
         esac
+        
+        echo
 
 done
