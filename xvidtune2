@@ -37,7 +37,7 @@ VSyncStart=$1; shift
 VSyncEnd=$1; shift
 VTotal=$1; shift
 
-XV_COUNT=0
+XV_COUNT=`date +%H%M%S`
 while true
 do
         XV_COUNT=$((XV_COUNT+1)); name=mode_t$XV_COUNT
@@ -60,8 +60,9 @@ do
         VBl1=$((VSyncStart-VDisp))
         VBl2=$((VTotal-VSyncEnd))
 
+	HRefresh=`echo "scale = 4; $DotClock * 1000 / $HTotal" | bc -l`
 	VRefresh=`echo "scale = 4; $DotClock * 1000000 / $HTotal / $VTotal" | bc -l`
-        echo "H: 0 >> $HDisp >> [$HBl1{$HSync}$HBl2] >> $HTotal\t V: 0 >> $VDisp >> [$VBl1{$VSync}$VBl2] >> $VTotal\tV.Refresh: $VRefresh Hz"
+        echo "H: 0 >> $HDisp >> [$HBl1{$HSync}$HBl2] >> $HTotal\t V: 0 >> $VDisp >> [$VBl1{$VSync}$VBl2] >> $VTotal\tV.Refresh: $VRefresh Hz (H.Refresh: $HRefresh kHz)"
 
         printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower, hse/HSE, hss/HSS, dc/DC, \t(u)p, (d)own, (t)aller, (s)shorter, vse/VSE, vss/VSS: "
         read cmds
