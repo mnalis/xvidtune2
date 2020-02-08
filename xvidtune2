@@ -1,0 +1,62 @@
+#!/bin/sh
+# Matija Nalis <mnalis-git@voyager.hr> started 2020/02, GPLv3+
+
+# FIXME - opcija da drzimo Vert.refresh konstantnim?
+# FIXME - github
+# FIXME - POSIX sh compatible
+
+test -z "$1" && set -- `xvidtune -show`
+
+# remove the original modeline name
+shift
+
+DotClock=$1; shift
+HDisp=$1; shift
+HSyncStart=$1; shift
+HSyncEnd=$1; shift
+HTotal=$1; shift
+
+VDisp=$1; shift
+VSyncStart=$1; shift
+VSyncEnd=$1; shift
+VTotal=$1; shift
+
+XV_COUNT=0
+export XV_COUNT
+while true
+do
+        XV_COUNT=$[XV_COUNT+1]; name=mode_t$XV_COUNT
+        echo   "Modeline $name $DotClock $HDisp $HSyncStart $HSyncEnd $HTotal  $VDisp $VSyncStart $VSyncEnd $VTotal $*"
+        xrandr --newmode $name $DotClock $HDisp $HSyncStart $HSyncEnd $HTotal  $VDisp $VSyncStart $VSyncEnd $VTotal $@
+        xrandr --addmode VGA1 $name; xrandr --output VGA1 --mode $name
+
+        HBlanking=$[HTotal-HDisp]
+        HSync=$[HSyncEnd-HSyncStart]
+        HBl1=$[HSyncStart-HDisp]
+        HBl2=$[HTotal-HSyncEnd]
+
+        VBlanking=$[VTotal-VDisp]
+        VSync=$[VSyncEnd-VSyncStart]
+        VBl1=$[VSyncStart-VDisp]
+        VBl2=$[VTotal-VSyncEnd]
+
+        VRefresh=$[DotClock*1000000/HTotal/VTotal]
+        echo "H: 0 >> $HDisp >> [$HBl1{$HSync}$HBl2] >> $HTotal\t V: 0 >> $VDisp >> [$VBl1{$VSync}$VBl2] >> $VTotal\tV.Refresh: $VRefresh Hz"
+
+        printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower: "
+        read cmd
+
+        case "$cmd" in
+                l)
+                        echo "move left"
+                        HSyncEnd=$[HSyncEnd+8]
+                        HSyncStart=$[HSyncStart+8]
+                        ;;
+                r)
+                        echo "move right"
+                        HSyncEnd=$[HSyncEnd-8]
+                        HSyncStart=$[HSyncStart-8]
+                        ;;
+        esac
+
+done
