@@ -48,7 +48,7 @@ case "$DotClock" in
 esac
 
 
-XV_COUNT=`date +%H%M%S`
+XV_COUNT=1`date +%H%M%S`
 while true
 do
         XV_COUNT=$((XV_COUNT+1)); name=mode_t$XV_COUNT
@@ -75,8 +75,18 @@ do
 	VRefresh=`echo "scale = 4; $DotClock * 1000000 / $HTotal / $VTotal" | bc -l`
         echo "H: 0 >> $HDisp >> [$HBl1{$HSync}$HBl2] >> $HTotal\t V: 0 >> $VDisp >> [$VBl1{$VSync}$VBl2] >> $VTotal\tV.Refresh: $VRefresh Hz (H.Refresh: $HRefresh kHz)"
 
-        printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower, hse/HSE, hss/HSS, dc/DC, \t(u)p, (d)own, (t)aller, (s)shorter, vse/VSE, vss/VSS: "
+        printf "Cmd: (l)eft, (r)ight, (w)ider, (n)arrower, hse/HSE, hss/HSS, dc/DC, \t(u)p, (d)own, (t)aller, (s)shorter, vse/VSE, vss/VSS, (R)estore: "
         read cmds
+
+	$old_DotClock=$DotClock
+	$old_HDisp=$HDisp
+	$old_HSyncStart=$HSyncStart
+	$old_HSyncEnd=$HSyncEnd
+	$old_HTotal=$HTotal
+	$old_VDisp=$VDisp
+	$old_VSyncStart=$VSyncStart
+	$old_VSyncEnd=$VSyncEnd
+	$old_VTotal=$VTotal
 
 	for cmd in `echo $cmds`
 	do 
@@ -174,6 +184,19 @@ do
 			echo "increment DotClock"
                         DotClock=$(echo $DotClock+1 | bc)
 			;;
+		R)
+			echo "Restoring previous values"
+			$DotClock=$old_DotClock
+			$HDisp=$old_HDisp
+			$HSyncStart=$old_HSyncStart
+			$HSyncEnd=$old_HSyncEnd
+			$HTotal=$old_HTotal
+			$VDisp=$old_VDisp
+			$VSyncStart=$old_VSyncStart
+			$VSyncEnd=$old_VSyncEnd
+			$VTotal=$old_VTotal
+			;;
+
 
             esac
 	done
