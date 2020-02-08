@@ -9,6 +9,7 @@ DEVICE="VGA1"
 
 echo "Please read https://arachnoid.com/modelines/ for details on Modeline tuning"
 echo "And make sure no values printed go negative (or too small) !!"
+echo "Example monitor patterns test can be found at: https://www.eizo.be/monitor-test/"
 echo
 
 
